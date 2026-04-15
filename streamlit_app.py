@@ -12,7 +12,19 @@ name_on_order = st.text_input('Name on Smoothie', key="name_input")
 st.write('The name on your smoothie will be:', name_on_order)
 
 # Get Snowflake session
-session = get_active_session()
+from snowflake.snowpark import Session
+
+connection_parameters = {
+    "account": st.secrets["account"],
+    "user": st.secrets["user"],
+    "password": st.secrets["password"],
+    "role": st.secrets["role"],
+    "warehouse": st.secrets["warehouse"],
+    "database": st.secrets["database"],
+    "schema": st.secrets["schema"]
+}
+
+session = Session.builder.configs(connection_parameters).create()
 
 # Fetch fruit data and convert to list
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
